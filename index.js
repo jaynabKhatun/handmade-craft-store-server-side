@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 
 const app = express();
@@ -37,23 +37,86 @@ async function run() {
 
 
         const craftsCollection = client.db("CraftDB").collection("crafts");
+        const userCollection = client.db("CraftDB").collection("users");
 
-        //add craft
+
+
+        app.get('/crafts', async (req, res) => {
+            const cursor = craftsCollection.find();
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.get('/crafts/:email', async (req, res) => {
+            console.log(req.params.email)
+            const result = await craftsCollection.find({ email: req.params.email }).toArray();
+            res.send(result)
+        })
+
+
+        app.get('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftsCollection.findOne(query);
+            res.send(result);
+
+
+        })
+
 
         app.post('/crafts', async (req, res) => {
             const newCraft = req.body;
             console.log(newCraft)
             const result = await craftsCollection.insertOne(newCraft);
             res.send(result)
-
-        });
-
-        app.get('/crafts', async (req, res) => {
-
-            const cursor = craftsCollection.find({});
-            const result = await cursor.toArray();
-            res.send(result)
         })
+
+
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateCraft = req.body;
+            const query = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updatedCraft = {
+                $set: {
+                    photo: updateCraft.photo,
+                    item: updateCraft.item,
+                    subcategory: updateCraft.subcategory,
+                    price: updateCraft.price,
+                    processing: updateCraft.processing,
+                    description: updateCraft.description,
+                    rating: updateCraft.rating,
+                    customization: updateCraft.customization,
+                    stockStatus: updateCraft.stockStatus,
+                    email: updateCraft.email,
+                    name: updateCraft.name
+
+                }
+            }
+
+            const result = await craftsCollection.updateOne(query, updatedCraft, options);
+            res.send(result);
+
+
+        })
+
+
+
+        app.delete('/crafts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftsCollection.deleteOne(query);
+            res.send(result);
+
+
+
+        })
+
+
+
+
+
+
 
 
 
