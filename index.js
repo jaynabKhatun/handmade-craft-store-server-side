@@ -37,6 +37,7 @@ async function run() {
 
 
         const craftsCollection = client.db("CraftDB").collection("crafts");
+        const subcategoryCollection = client.db("CraftDB").collection("subcategorys");
         const userCollection = client.db("CraftDB").collection("users");
 
 
@@ -54,6 +55,16 @@ async function run() {
         })
 
 
+        // app.get('/crafts/:customization', async (req, res) => {
+        //     console.log(req.params.customization);
+
+        //     const result = await craftsCollection.find({ customization: req.params.customization }).toArray();
+        //     res.send(result)
+        // })
+
+
+
+
         app.get('/product/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -64,11 +75,43 @@ async function run() {
         })
 
 
+
+        app.get('/craftdata/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftsCollection.findOne(query);
+            res.send(result);
+        })
+
         app.post('/crafts', async (req, res) => {
             const newCraft = req.body;
             console.log(newCraft)
             const result = await craftsCollection.insertOne(newCraft);
             res.send(result)
+        })
+
+
+        //subcategory
+
+        app.post('/subcategorydata', async (req, res) => {
+            const newSubcategory = req.body;
+            console.log(newSubcategory)
+            const result = await subcategoryCollection.insertOne(newSubcategory);
+            res.send(result);
+        })
+
+        app.get('/subcategorydata', async (req, res) => {
+            const cursor = subcategoryCollection.find();
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.get('/subdata/:id', async (req, res) => {
+            console.log(req.params.id)
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await subcategoryCollection.findOne(query);
+            res.send(result);
         })
 
 
