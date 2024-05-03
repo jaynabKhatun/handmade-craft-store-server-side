@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 //middlewares
 // Middleware Connections
 const corsConfig = {
-    origin: ["http://localhost:5173", "https://art-and-craft-store-fe30c.web.app"],
+    origin: ["http://localhost:5173", "https://art-and-craft-store-fe30c.web.app","https://spontaneous-cassata-2832b3.netlify.app"],
     credentials: true,
 };
 app.use(cors(corsConfig));
