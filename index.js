@@ -59,12 +59,22 @@ async function run() {
       res.send(result);
     });
 
-    // app.get('/crafts/:customization', async (req, res) => {
-    //     console.log(req.params.customization);
-
-    //     const result = await craftsCollection.find({ customization: req.params.customization }).toArray();
-    //     res.send(result)
-    // })
+    //filtering
+    app.get("/crafts/:email", async (req, res) => {
+        const { email } = req.params;
+        const { filter } = req.query;
+      
+        let query = { email };
+      
+        if (filter) {
+          query.stockStatus = filter; // Adjust field name based on your database schema
+        }
+      
+        const crafts = await craftsCollection.find(query).toArray();
+        res.send(crafts);
+      });
+      
+ 
 
     app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
